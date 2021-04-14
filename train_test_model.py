@@ -1,4 +1,3 @@
-import pickle
 import numpy
 numpy.random.seed(123)
 from models import *
@@ -7,10 +6,10 @@ import sys
 sys.setrecursionlimit(10000)
 
 train_ratio = 0.9
-shuffle_data = False
+shuffle_data = True
 one_hot_as_input = False
-embeddings_as_input = False
-save_embeddings = True
+embeddings_as_input = True
+save_embeddings = False
 saved_embeddings_fname = "embeddings.pickle"  # set save_embeddings to True to create this file
 
 f = open('feature_train_data.pickle', 'rb')
@@ -58,18 +57,18 @@ print("Fitting NN_with_EntityEmbedding...")
 for i in range(5):
     models.append(NN_with_EntityEmbedding(X_train, y_train, X_val, y_val))
 
-# print("Fitting NN...")
-# for i in range(5):
-#     models.append(NN(X_train, y_train, X_val, y_val))
+print("Fitting NN...")
+for i in range(5):
+    models.append(NN(X_train, y_train, X_val, y_val))
 
-# print("Fitting RF...")
-# models.append(RF(X_train, y_train, X_val, y_val))
+print("Fitting RF...")
+models.append(RF(X_train, y_train, X_val, y_val))
 
-# print("Fitting KNN...")
-# models.append(KNN(X_train, y_train, X_val, y_val))
+print("Fitting KNN...")
+models.append(KNN(X_train, y_train, X_val, y_val))
 
-# print("Fitting XGBoost...")
-# models.append(XGBoost(X_train, y_train, X_val, y_val))
+print("Fitting XGBoost...")
+models.append(XGBoost(X_train, y_train, X_val, y_val))
 
 
 if save_embeddings:
@@ -86,7 +85,7 @@ if save_embeddings:
 
 
 def evaluate_models(models, X, y):
-    assert(min(y) > 0)
+    assert (min(y) > 0)
     guessed_sales = numpy.array([model.guess(X) for model in models])
     mean_sales = guessed_sales.mean(axis=0)
     relative_err = numpy.absolute((y - mean_sales) / y)
